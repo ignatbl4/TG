@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Bitcoin Tracker | Telegram Mini App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Helvetica, sans-serif;
+            background: linear-gradient(145deg, #0B0E1A 0%, #121624 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #E0E3F0;
+        }
+
+        .card {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(20, 24, 35, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 28px 24px 36px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(247, 147, 26, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btc-icon {
+            font-size: 36px;
+            filter: drop-shadow(0 2px 8px rgba(247, 147, 26, 0.4));
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #F7931A, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .badge {
+            background: #1E293B;
+            padding: 6px 14px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #A0B0D0;
+            backdrop-filter: blur(4px);
+            border: 0.5px solid #334155;
+        }
+
+        .price-container {
+            background: #070B13;
+            border-radius: 48px;
+            padding: 24px 20px;
+            margin-bottom: 28px;
+            text-align: center;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5), 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #2A2F3F;
+        }
+
+        .price-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            color: #F7931A;
+            opacity: 0.8;
+            margin-bottom: 12px;
+        }
+
+        .price {
+            font-size: 3.6rem;
+            font-weight: 800;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            letter-spacing: -1px;
+            word-break: break-word;
+            color: #FEF7E6;
+            text-shadow: 0 1px 2px black;
+        }
+
+        .currency {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #7E8AA8;
+        }
+
+        .change {
+            margin-top: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 16px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+        }
+
+        .positive {
+            color: #4ADE80;
+        }
+
+        .negative {
+            color: #FF6B6B;
+        }
+
+        .info-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .info-card {
+            background: #0F1320;
+            flex: 1;
+            border-radius: 28px;
+            padding: 12px 8px;
+            text-align: center;
+            backdrop-filter: blur(4px);
+            border: 0.5px solid #272E3E;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: #7F8BAA;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 6px;
+            font-family: monospace;
+        }
+
+        .history-section {
+            background: #0A0E17;
+            border-radius: 32px;
+            padding: 12px 8px 8px 12px;
+            margin-bottom: 24px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0 8px 12px 8px;
+            border-bottom: 1px solid #232838;
+        }
+
+        .history-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #C0CAF0;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #F7931A;
+            font-size: 0.7rem;
+            font-weight: 600;
+            opacity: 0.7;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .clear-btn:active {
+            opacity: 1;
+            transform: scale(0.96);
+        }
+
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 8px;
+            border-bottom: 1px solid #1A1F2C;
+            font-size: 0.85rem;
+            font-family: monospace;
+        }
+
+        .history-time {
+            color: #8F9BB5;
+            font-size: 0.7rem;
+        }
+
+        .history-price {
+            font-weight: 600;
+            color: #F7931A;
+        }
+
+        .update-status {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            font-size: 0.7rem;
+            color: #6B7A9E;
+        }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(247, 147, 26, 0.2);
+            border-top: 2px solid #F7931A;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        button {
+            background: #1F2937;
+            transition: all 0.1s ease;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0F1320;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #F7931A;
+            border-radius: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 18px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+<div class="card" id="app">
+    <div class="header">
+        <div class="title">
+            <span class="btc-icon">₿</span>
+            <h1>Bitcoin</h1>
+        </div>
+        <div class="badge" id="updateBadge">LIVE · USD</div>
+    </div>
+
+    <div class="price-container">
+        <div class="price-label">ТЕКУЩИЙ КУРС</div>
+        <div class="price">
+            <span id="btcPrice">—</span>
+            <span class="currency">USD</span>
+        </div>
+        <div id="changeIndicator" class="change">—</div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="info-label">24h HIGH</div>
+            <div class="info-value" id="high24h">—</div>
+        </div>
+        <div class="info-card">
+            <div class="info-label">24h LOW</div>
+            <div class="info-value" id="low24h">—</div>
+        </div>
+        <div class="info-card">
+            <div class="info-label">ВОЛЮМ (24h)</div>
+            <div class="info-value" id="volume">—</div>
+        </div>
+    </div>
+
+    <div class="history-section">
+        <div class="history-header">
+            <span class="history-title">📜 История цен (последние 10)</span>
+            <button class="clear-btn" id="clearHistoryBtn">Очистить</button>
+        </div>
+        <div class="history-list" id="historyList">
+            <div style="text-align:center; padding: 20px; color:#4A5670;">Нет данных, ожидаем курс...</div>
+        </div>
+    </div>
+
+    <div class="update-status">
+        <div id="statusIcon" class="spinner" style="display: none;"></div>
+        <span id="statusText">Последнее обновление: —</span>
+    </div>
+    <div class="footer">
+        Данные в реальном времени • Обновление каждые 10 сек
+    </div>
+</div>
+
+<script>
+    // --- TELEGRAM INTEGRATION (опционально, но оставим для Mini App) ---
+    let tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.expand();   // растянуть на весь экран
+        tg.enableClosingConfirmation();
+        tg.setHeaderColor('bg_color');
+        tg.setBackgroundColor('#121624');
+    }
+
+    // --- Глобальные переменные ---
+    let currentPrice = null;
+    let lastPrice = null;
+    let history = [];      // массив объектов { price, timestamp, timeStr }
+    const MAX_HISTORY = 10;
+
+    // DOM элементы
+    const btcPriceSpan = document.getElementById('btcPrice');
+    const changeIndicator = document.getElementById('changeIndicator');
+    const high24hSpan = document.getElementById('high24h');
+    const low24hSpan = document.getElementById('low24h');
+    const volumeSpan = document.getElementById('volume');
+    const historyListDiv = document.getElementById('historyList');
+    const statusTextSpan = document.getElementById('statusText');
+    const statusIcon = document.getElementById('statusIcon');
+
+    // Вспомогательная функция форматирования чисел
+    function formatNumber(num) {
+        if (num === undefined || num === null) return '—';
+        return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Форматирование объема (короткое)
+    function formatVolume(vol) {
+        if (!vol && vol !== 0) return '—';
+        if (vol >= 1e9) return (vol / 1e9).toFixed(2) + 'B';
+        if (vol >= 1e6) return (vol / 1e6).toFixed(2) + 'M';
+        if (vol >= 1e3) return (vol / 1e3).toFixed(2) + 'K';
+        return vol.toFixed(2);
+    }
+
+    // Добавить цену в историю
+    function addToHistory(price, timestamp = null) {
+        if (!price) return;
+        const now = timestamp || new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const newEntry = {
+            price: price,
+            timestamp: now.getTime(),
+            timeStr: timeStr
+        };
+        // Проверяем, не совпадает ли последнее значение (чтобы не дублировать подряд одинаковые цены, но иногда пусть будет)
+        if (history.length > 0 && history[0].price === price && (now.getTime() - history[0].timestamp) < 2000) {
+            // если цена та же и прошло меньше 2 сек – не добавляем, но все равно обновим время последнего? для чистоты не будем спамить
+            return;
+        }
+        history.unshift(newEntry);
+        if (history.length > MAX_HISTORY) history.pop();
+        renderHistory();
+    }
+
+    // Отрисовка истории
+    function renderHistory() {
+        if (!historyListDiv) return;
+        if (history.length === 0) {
+            historyListDiv.innerHTML = '<div style="text-align:center; padding: 20px; color:#4A5670;">📭 История пуста</div>';
+            return;
+        }
+        let html = '';
+        for (let item of history) {
+            html += `
+                <div class="history-item">
+                    <span class="history-time">${item.timeStr}</span>
+                    <span class="history-price">₿ ${formatNumber(item.price)} USD</span>
+                </div>
+            `;
+        }
+        historyListDiv.innerHTML = html;
+    }
+
+    // Очистить историю
+    function clearHistory() {
+        history = [];
+        renderHistory();
+        if (tg) tg.HapticFeedback?.impactOccurred('light');
+    }
+
+    // Обновить интерфейс (цена, изменения, 24h максимумы)
+    function updateUI(data) {
+        if (!data) return;
+        // Основная цена BTC/USD
+        const price = data.price || (data.rate ? data.rate : null);
+        if (price && typeof price === 'number') {
+            currentPrice = price;
+            btcPriceSpan.innerText = formatNumber(currentPrice);
+            // Вычисление изменения с прошлой ценой
+            if (lastPrice !== null && lastPrice !== currentPrice) {
+                const changeAbs = currentPrice - lastPrice;
+                const changePercent = (changeAbs / lastPrice) * 100;
+                const sign = changeAbs >= 0 ? '+' : '';
+                const colorClass = changeAbs >= 0 ? 'positive' : 'negative';
+                changeIndicator.innerHTML = `${sign}${formatNumber(Math.abs(changeAbs))} (${sign}${changePercent.toFixed(2)}%)`;
+                changeIndicator.className = `change ${colorClass}`;
+            } else if (lastPrice === null && currentPrice) {
+                changeIndicator.innerHTML = `— (0.00%)`;
+                changeIndicator.className = `change`;
+            }
+            lastPrice = currentPrice;
+            // Добавляем в историю (если цена изменилась)
+            addToHistory(currentPrice);
+        } else {
+            btcPriceSpan.innerText = '—';
+        }
+
+        // 24h High / Low / Volume
+        if (data.high24h !== undefined && data.high24h !== null) {
+            high24hSpan.innerText = formatNumber(data.high24h);
+        } else if (data.high) {
+            high24hSpan.innerText = formatNumber(data.high);
+        } else {
+            high24hSpan.innerText = '—';
+        }
+
+        if (data.low24h !== undefined && data.low24h !== null) {
+            low24hSpan.innerText = formatNumber(data.low24h);
+        } else if (data.low) {
+            low24hSpan.innerText = formatNumber(data.low);
+        } else {
+            low24hSpan.innerText = '—';
+        }
+
+        if (data.volume24h !== undefined && data.volume24h !== null) {
+            volumeSpan.innerText = formatVolume(data.volume24h);
+        } else if (data.volume) {
+            volumeSpan.innerText = formatVolume(data.volume);
+        } else {
+            volumeSpan.innerText = '—';
+        }
+    }
+
+    // Отображение статуса загрузки
+    function setLoading(isLoading) {
+        if (isLoading) {
+            statusIcon.style.display = 'inline-block';
+        } else {
+            statusIcon.style.display = 'none';
+        }
+    }
+
+    function setLastUpdateTime() {
+        const now = new Date();
+        statusTextSpan.innerText = `Последнее обновление: ${now.toLocaleTimeString()}`;
+        if (tg) {
+            // можно отправить данные в Telegram WebApp, если надо
+        }
+    }
+
+    // --- ЗАПРОС К БИРЖЕВОМУ API (CoinGecko) + fallback (Binance) ---
+    // Используем публичный API CoinGecko (без ключа, но с задержкой)
+    // Параллельно можно сделать Binance как бэкап, но для простоты используем CoinGecko с прокси?
+    // Так как MiniApp может быть запущен из Telegram, CORS не проблема — CoinGecko поддерживает CORS.
+    async function fetchBitcoinPrice() {
+        setLoading(true);
+        try {
+            // CoinGecko endpoint: текущая цена, 24h high/low, объем
+            const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_24hr_high_low=true';
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            if (data && data.bitcoin) {
+                const btc = data.bitcoin;
+                const price = btc.usd;
+                const change24h = btc.usd_24h_change || 0;
+                const high24h = btc.usd_24h_high;
+                const low24h = btc.usd_24h_low;
+                const volume24h = btc.usd_24h_vol;
+
+                // Формируем объект для UI
+                const result = {
+                    price: price,
+                    high24h: high24h,
+                    low24h: low24h,
+                    volume24h: volume24h,
+                    change24h: change24h
+                };
+                updateUI(result);
+                setLastUpdateTime();
+                setLoading(false);
+                return true;
+            } else {
+                throw new Error('Invalid response structure');
+            }
+        } catch (error) {
+            console.warn('CoinGecko error, trying Binance fallback', error);
+            // Fallback на Binance API (простой и быстрый)
+            try {
+                const binanceUrl = 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT';
+                const binResp = await fetch(binanceUrl);
+                if (!binResp.ok) throw new Error('Binance error');
+                const binData = await binResp.json();
+                const price = parseFloat(binData.lastPrice);
+                const high24h = parseFloat(binData.highPrice);
+                const low24h = parseFloat(binData.lowPrice);
+                const volume24h = parseFloat(binData.quoteVolume); // объем в USDT
+                if (!isNaN(price)) {
+                    updateUI({
+                        price: price,
+                        high24h: high24h,
+                        low24h: low24h,
+                        volume24h: volume24h
+                    });
+                    setLastUpdateTime();
+                    setLoading(false);
+                    return true;
+                } else {
+                    throw new Error('Price NaN');
+                }
+            } catch (fallbackErr) {
+                console.error('Both APIs failed:', fallbackErr);
+                statusTextSpan.innerText = '⚠️ Ошибка загрузки, повтор через 10 сек';
+                setLoading(false);
+                return false;
+            }
+        }
+    }
+
+    // --- Автообновление каждые 10 секунд ---
+    let intervalId = null;
+
+    async function refreshData() {
+        await fetchBitcoinPrice();
+    }
+
+    function startAutoRefresh() {
+        if (intervalId) clearInterval(intervalId);
+        // сразу первый запрос
+        refreshData();
+        intervalId = setInterval(() => {
+            refreshData();
+        }, 10000); // 10 секунд
+    }
+
+    // --- Обработка клика по очистке истории ---
+    document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+        clearHistory();
+        if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+    });
+
+    // Инициализация + настройка видимости для Telegram
+    window.addEventListener('load', () => {
+        startAutoRefresh();
+        // Если хотим поддерживать динамическую тему Telegram
+        if (tg) {
+            const colorScheme = tg.colorScheme;
+            if (colorScheme === 'dark') {
+                document.body.style.background = '#0B0E1A';
+            }
+            tg.ready();
+        }
+    });
+</script>
+</body>
+</html>
