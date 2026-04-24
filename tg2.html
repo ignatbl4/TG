@@ -60,23 +60,6 @@
             opacity: 0.9;
         }
 
-        .telegram-login-btn {
-            display: inline-block;
-            background: white;
-            color: #2d3436;
-            padding: 14px 32px;
-            border-radius: 60px;
-            font-size: 18px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .telegram-login-btn:hover {
-            transform: scale(1.02);
-        }
-
         /* Main app (hidden until auth) */
         .main-app {
             display: none;
@@ -335,6 +318,24 @@
             padding: 50px;
             color: var(--text-secondary);
         }
+        
+        /* Telegram Login Button container */
+        #telegram-login-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 8px;
+        }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -344,6 +345,7 @@
         <h1>✨ Live in Life ✨</h1>
         <p>Знакомства для живого общения</p>
         <div id="telegram-login-container"></div>
+        <div style="margin-top: 24px; font-size: 14px; opacity: 0.7;">Войдите через Telegram</div>
     </div>
 
     <!-- Основное приложение (показывается после авторизации) -->
@@ -353,6 +355,7 @@
             <div class="user-info" id="user-info">
                 <img class="user-avatar" id="user-avatar" src="" alt="">
                 <span class="user-name" id="user-name"></span>
+                <button class="logout-btn" id="logout-btn">Выйти</button>
             </div>
         </div>
 
@@ -391,7 +394,7 @@
                     <option value="55-70">55–70 лет</option>
                 </select>
                 <label>📸 Фото (ссылки через запятую)</label>
-                <input type="text" id="profile-photo-urls" placeholder="https://...">
+                <input type="text" id="profile-photo-urls" placeholder="https://example.com/photo.jpg">
                 <div class="photos-preview" id="photos-preview"></div>
                 <button id="save-profile-btn">💾 Сохранить</button>
                 <button id="delete-account-btn" style="background:#c0392b;">🗑️ Удалить аккаунт</button>
@@ -400,9 +403,9 @@
 
         <div id="chat-modal" class="modal">
             <div class="modal-content">
-                <div class="chat-header" style="padding:16px; display:flex; justify-content:space-between;">
-                    <span id="chat-other-name"></span>
-                    <button id="close-chat-btn" style="background:none; border:none; font-size:24px;">✖</button>
+                <div style="padding:16px; display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color);">
+                    <span id="chat-other-name" style="font-weight: bold;"></span>
+                    <button id="close-chat-btn" style="background:none; border:none; font-size:24px; cursor:pointer;">✖</button>
                 </div>
                 <div id="chat-messages" class="chat-messages"></div>
                 <div class="chat-input">
@@ -416,10 +419,11 @@
     </div>
 
     <script>
-        // ==================== Telegram Авторизация ====================
+        // ==================== Telegram Авторизация через бота @Live_in_Life_bot ====================
         let currentUserId = null;
         let currentTelegramId = null;
         let currentChatPairId = null;
+        let currentTelegramUser = null;
         let users = {};
         let chats = [];
         let messages = {};
@@ -444,12 +448,9 @@
             return users[currentUserId] || null;
         }
 
-        function saveProfileToLocal() {
-            saveData();
-        }
-
         // Инициализация после авторизации
         function initAfterAuth(telegramUser) {
+            currentTelegramUser = telegramUser;
             currentTelegramId = telegramUser.id;
             // Загружаем данные
             loadData();
@@ -500,8 +501,13 @@
             loadNextCard();
             loadChats();
         }
+        
+        function logout() {
+            localStorage.removeItem('liveinlife_data');
+            location.reload();
+        }
 
-        // Telegram Login Widget
+        // Telegram Login Widget с ботом @Live_in_Life_bot
         function initTelegramAuth() {
             // Если уже внутри Telegram Mini App
             if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
@@ -515,21 +521,35 @@
                 return;
             }
             
-            // Иначе показываем кнопку входа через Telegram Widget
-            const script = document.createElement('script');
-            script.src = 'https://telegram.org/js/telegram-widget.js?22';
-            script.async = true;
-            script.setAttribute('data-telegram-login', '@Live_in_Life_bot'); // Замените на username вашего бота
-            script.setAttribute('data-size', 'large');
-            script.setAttribute('data-radius', '30');
-            script.setAttribute('data-request-access', 'write');
-            script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-            document.getElementById('telegram-login-container').appendChild(script);
+            // Иначе показываем кнопку входа через Telegram Widget с ботом Live_in_Life_bot
+            const container = document.getElementById('telegram-login-container');
+            container.innerHTML = '';
+            
+            // Создаем iframe виджет Telegram Login
+            const iframe = document.createElement('iframe');
+            const botUsername = 'Live_in_Life_bot';
+            const redirectUrl = window.location.href.split('?')[0];
+            iframe.src = `https://oauth.telegram.org/embed/${botUsername}?origin=${encodeURIComponent(redirectUrl)}&size=large&request_access=write`;
+            iframe.width = '300';
+            iframe.height = '80';
+            iframe.style.border = 'none';
+            iframe.style.overflow = 'hidden';
+            container.appendChild(iframe);
+            
+            // Слушаем сообщения от виджета
+            window.addEventListener('message', function(e) {
+                if (e.origin !== 'https://oauth.telegram.org') return;
+                if (e.data && e.data.event === 'auth_user') {
+                    const user = e.data.user;
+                    initAfterAuth({
+                        id: user.id,
+                        first_name: user.first_name,
+                        username: user.username,
+                        photo_url: user.photo_url
+                    });
+                }
+            });
         }
-
-        window.onTelegramAuth = function(user) {
-            initAfterAuth(user);
-        };
 
         // ==================== Остальная логика приложения ====================
         function loadProfileUI() {
@@ -547,10 +567,12 @@
         function renderPhotoPreviews(urlsStr) {
             const container = document.getElementById('photos-preview');
             container.innerHTML = '';
+            if (!urlsStr) return;
             const urls = urlsStr.split(',').map(u => u.trim()).filter(u => u);
             urls.forEach(url => {
                 const img = document.createElement('img');
                 img.src = url;
+                img.onerror = () => { img.src = 'https://via.placeholder.com/80?text=Photo'; };
                 container.appendChild(img);
             });
         }
@@ -569,7 +591,7 @@
             if (profile.photos.length === 0) profile.photos = ['https://randomuser.me/api/portraits/women/68.jpg'];
             users[currentUserId] = profile;
             saveData();
-            alert('Профиль сохранён!');
+            alert('✅ Профиль сохранён!');
             loadNextCard();
         }
 
@@ -635,7 +657,7 @@
                         const newChat = { id: Date.now(), user1: currentUserId, user2: targetId };
                         chats.push(newChat);
                         messages[newChat.id] = [];
-                        alert(`💖 Взаимная симпатия с ${users[targetId].name}!`);
+                        alert(`💖 Взаимная симпатия с ${users[targetId].name}! Чат открыт.`);
                     }
                     saveData();
                     loadChats();
@@ -652,7 +674,7 @@
             const myChats = chats.filter(c => c.user1 === currentUserId || c.user2 === currentUserId);
             const container = document.getElementById('chats-list');
             if (myChats.length === 0) {
-                container.innerHTML = '<div class="no-data">💬 Пока нет диалогов</div>';
+                container.innerHTML = '<div class="no-data">💬 Пока нет диалогов. Ставьте сердечки!</div>';
                 return;
             }
             container.innerHTML = '';
@@ -668,7 +690,7 @@
                 div.innerHTML = `
                     <div>
                         <div class="chat-name">${other.name}</div>
-                        <div class="chat-last-msg">${lastMsg?.text || 'Начните общение'}</div>
+                        <div class="chat-last-msg">${lastMsg?.text || 'Начните общение ✨'}</div>
                     </div>
                     ${unread > 0 ? `<div class="unread-badge">${unread}</div>` : ''}
                 `;
@@ -713,11 +735,11 @@
         }
 
         function deleteAccount() {
-            if (confirm('Удалить аккаунт навсегда?')) {
+            if (confirm('🗑️ Удалить аккаунт навсегда? Все данные будут потеряны.')) {
                 delete users[currentUserId];
                 saveData();
-                alert('Аккаунт удалён. Обновите страницу.');
-                location.reload();
+                alert('Аккаунт удалён.');
+                logout();
             }
         }
 
@@ -736,8 +758,10 @@
         document.getElementById('send-msg-btn')?.addEventListener('click', sendMessage);
         document.getElementById('close-chat-btn')?.addEventListener('click', () => {
             document.getElementById('chat-modal').style.display = 'none';
+            currentChatPairId = null;
         });
         document.getElementById('delete-account-btn')?.addEventListener('click', deleteAccount);
+        document.getElementById('logout-btn')?.addEventListener('click', logout);
         
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -752,8 +776,13 @@
             });
         });
 
-        // Запуск
+        // Автоматический вход через Telegram WebApp или виджет
         initTheme();
+        
+        // Проверяем, есть ли уже данные в localStorage
+        loadData();
+        
+        // Запускаем авторизацию
         initTelegramAuth();
     </script>
 </body>
