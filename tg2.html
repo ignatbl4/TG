@@ -3,22 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Live in Life | Знакомства для живого общения</title>
+    <title>Live in Life | Знакомства с авторизацией</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg-color, #ffffff);
-            color: var(--text-color, #000000);
+            background: var(--bg-color, #fef9f4);
+            color: var(--text-color, #2d3436);
             overflow-x: hidden;
         }
 
-        /* Тёмная и светлая темы */
         body.dark {
             --bg-color: #121212;
             --surface-color: #1e1e1e;
@@ -28,7 +23,6 @@
             --border-color: #333;
             --primary: #ff6b6b;
             --primary-dark: #e55555;
-            --secondary: #4ecdc4;
         }
 
         body.light {
@@ -40,28 +34,85 @@
             --border-color: #e0e0e0;
             --primary: #ff6b6b;
             --primary-dark: #e55555;
-            --secondary: #4ecdc4;
         }
 
-        /* Хедер с логотипом */
+        /* Auth screen */
+        .auth-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .auth-screen h1 {
+            font-size: 42px;
+            margin-bottom: 16px;
+        }
+
+        .auth-screen p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .telegram-login-btn {
+            display: inline-block;
+            background: white;
+            color: #2d3436;
+            padding: 14px 32px;
+            border-radius: 60px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .telegram-login-btn:hover {
+            transform: scale(1.02);
+        }
+
+        /* Main app (hidden until auth) */
+        .main-app {
+            display: none;
+        }
+
         .app-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             padding: 16px;
             text-align: center;
             color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .app-header h1 {
-            font-size: 24px;
-            letter-spacing: 1px;
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 40px;
         }
 
-        .app-header p {
-            font-size: 12px;
-            opacity: 0.9;
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
-        /* Tabs */
+        .user-name {
+            font-size: 14px;
+            font-weight: normal;
+        }
+
         .tabs {
             display: flex;
             background: var(--surface-color);
@@ -95,11 +146,9 @@
             overflow-y: auto;
         }
 
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content.active { display: block; }
 
-        /* Cards - как в real life */
+        /* Cards */
         .cards-container {
             display: flex;
             justify-content: center;
@@ -126,22 +175,12 @@
             display: flex;
             flex-direction: column;
             cursor: grab;
-            transition: transform 0.2s ease;
-        }
-
-        .card:active {
-            cursor: grabbing;
         }
 
         .card-photo {
             width: 100%;
             height: 65%;
             object-fit: cover;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
         }
 
         .card-info {
@@ -175,38 +214,18 @@
             padding: 12px 28px;
             border-radius: 60px;
             transition: 0.1s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .like-btn { color: var(--primary); }
         .dislike-btn { color: var(--text-secondary); }
-        .like-btn:active { transform: scale(1.1); background: #ffe0e0; }
-        .dislike-btn:active { transform: scale(1.1); background: #e0e0e0; }
 
-        /* Chat list */
+        /* Chat */
         .chat-item {
             padding: 16px;
             border-bottom: 1px solid var(--border-color);
             cursor: pointer;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            transition: background 0.2s;
-        }
-
-        .chat-item:hover {
-            background: var(--surface-light);
-        }
-
-        .chat-name {
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .chat-last-msg {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 4px;
         }
 
         .unread-badge {
@@ -215,47 +234,29 @@
             border-radius: 20px;
             padding: 4px 10px;
             font-size: 12px;
-            font-weight: bold;
-        }
-
-        /* Profile form */
-        .profile-form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
         }
 
         .profile-form input, .profile-form select, .profile-form button {
+            width: 100%;
             padding: 12px;
+            margin: 8px 0;
             border-radius: 16px;
             border: 1px solid var(--border-color);
             background: var(--surface-color);
             color: var(--text-color);
-            font-size: 16px;
         }
 
         .profile-form button {
             background: var(--primary);
             color: white;
-            border: none;
-            cursor: pointer;
             font-weight: bold;
-        }
-
-        .profile-form button.secondary {
-            background: var(--secondary);
-            color: #2d3436;
-        }
-
-        .profile-form button.danger {
-            background: #c0392b;
+            cursor: pointer;
         }
 
         .photos-preview {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            margin: 8px 0;
         }
 
         .photos-preview img {
@@ -263,15 +264,8 @@
             height: 80px;
             object-fit: cover;
             border-radius: 16px;
-            border: 2px solid var(--border-color);
         }
 
-        hr {
-            margin: 16px 0;
-            border-color: var(--border-color);
-        }
-
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -281,8 +275,6 @@
             height: 100%;
             background: rgba(0,0,0,0.95);
             z-index: 1000;
-            justify-content: center;
-            align-items: center;
         }
 
         .modal-content {
@@ -293,22 +285,10 @@
             flex-direction: column;
         }
 
-        .chat-header {
-            padding: 16px;
-            background: var(--surface-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
         .chat-messages {
             flex: 1;
             overflow-y: auto;
             padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
         }
 
         .message {
@@ -316,20 +296,19 @@
             padding: 10px 14px;
             border-radius: 20px;
             background: var(--surface-light);
-            align-self: flex-start;
-            word-wrap: break-word;
+            margin: 8px 0;
         }
 
         .message.own {
             background: var(--primary);
             color: white;
             align-self: flex-end;
+            margin-left: auto;
         }
 
         .chat-input {
             display: flex;
             padding: 12px;
-            border-top: 1px solid var(--border-color);
             gap: 8px;
         }
 
@@ -338,94 +317,71 @@
             padding: 12px;
             border-radius: 28px;
             border: 1px solid var(--border-color);
-            background: var(--surface-color);
-            color: var(--text-color);
         }
 
-        .chat-input button {
-            padding: 12px 24px;
-            border-radius: 28px;
-            border: none;
-            background: var(--primary);
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--text-secondary);
-            font-size: 16px;
-        }
-
-        /* Theme toggle */
         .theme-toggle {
             position: fixed;
             bottom: 20px;
             right: 20px;
             background: var(--surface-color);
-            border: 1px solid var(--border-color);
             border-radius: 40px;
             padding: 10px 16px;
             cursor: pointer;
             z-index: 20;
-            font-size: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
-        /* Вдохновляющий блок */
-        .inspire {
+        .no-data {
             text-align: center;
-            font-size: 12px;
+            padding: 50px;
             color: var(--text-secondary);
-            padding: 8px;
-            background: var(--surface-light);
-            border-radius: 20px;
-            margin-top: 8px;
         }
     </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div id="app">
+    <!-- Экран авторизации -->
+    <div id="auth-screen" class="auth-screen">
+        <h1>✨ Live in Life ✨</h1>
+        <p>Знакомства для живого общения</p>
+        <div id="telegram-login-container"></div>
+    </div>
+
+    <!-- Основное приложение (показывается после авторизации) -->
+    <div id="main-app" class="main-app">
         <div class="app-header">
-            <h1>✨ Live in Life ✨</h1>
-            <p>Знакомства для живого общения</p>
+            <h2>✨ Live in Life</h2>
+            <div class="user-info" id="user-info">
+                <img class="user-avatar" id="user-avatar" src="" alt="">
+                <span class="user-name" id="user-name"></span>
+            </div>
         </div>
 
         <div class="tabs">
             <button class="tab-btn active" data-tab="cards">💘 Встречи</button>
             <button class="tab-btn" data-tab="chats">💬 Диалоги</button>
-            <button class="tab-btn" data-tab="profile">👤 Моё пространство</button>
+            <button class="tab-btn" data-tab="profile">👤 Профиль</button>
         </div>
 
-        <!-- Cards tab -->
         <div id="cards-tab" class="tab-content active">
             <div class="cards-container">
                 <div id="card-stack"></div>
-                <div id="no-cards-message" class="no-data" style="display: none;">
-                    🌿 Пока нет новых встреч<br>
-                    Измените город или возраст поиска
-                </div>
+                <div id="no-cards-message" class="no-data" style="display: none;">✨ Нет новых встреч</div>
             </div>
-            <div class="inspire">❤️ Свайп вправо — симпатия, влево — пропустить</div>
         </div>
 
-        <!-- Chats tab -->
         <div id="chats-tab" class="tab-content">
             <div id="chats-list"></div>
         </div>
 
-        <!-- Profile tab -->
         <div id="profile-tab" class="tab-content">
             <div class="profile-form">
                 <h3>Моя анкета</h3>
-                <label>🌟 Как к вам обращаться?</label>
-                <input type="text" id="profile-name" placeholder="Имя или псевдоним">
-                <label>📅 Ваш возраст</label>
+                <label>🌟 Имя</label>
+                <input type="text" id="profile-name" placeholder="Как вас зовут?">
+                <label>📅 Возраст</label>
                 <input type="number" id="profile-age" placeholder="18">
-                <label>📍 Город (для поиска)</label>
-                <input type="text" id="profile-city" placeholder="Москва, СПб, Казань...">
+                <label>📍 Город</label>
+                <input type="text" id="profile-city" placeholder="Москва">
                 <label>🎯 Ищу возраст</label>
                 <select id="profile-search-range">
                     <option value="18-25">18–25 лет</option>
@@ -434,38 +390,25 @@
                     <option value="45-55">45–55 лет</option>
                     <option value="55-70">55–70 лет</option>
                 </select>
-                <label>📸 Фото (ссылки, до 5 штук)</label>
-                <input type="text" id="profile-photo-urls" placeholder="https://... , https://... (через запятую)">
+                <label>📸 Фото (ссылки через запятую)</label>
+                <input type="text" id="profile-photo-urls" placeholder="https://...">
                 <div class="photos-preview" id="photos-preview"></div>
-                <button id="save-profile-btn">💾 Сохранить анкету</button>
-                <hr>
-                <button id="blocked-list-btn" class="secondary">🚫 Заблокированные</button>
-                <button id="delete-account-btn" class="danger">🗑️ Удалить аккаунт</button>
-                <div class="inspire">🌱 Здесь начинаются настоящие встречи</div>
+                <button id="save-profile-btn">💾 Сохранить</button>
+                <button id="delete-account-btn" style="background:#c0392b;">🗑️ Удалить аккаунт</button>
             </div>
         </div>
 
-        <!-- Chat modal -->
         <div id="chat-modal" class="modal">
             <div class="modal-content">
-                <div class="chat-header">
-                    <span id="chat-other-name" style="font-weight: bold;"></span>
-                    <button id="close-chat-btn" style="background:none; border:none; font-size:28px; cursor:pointer; color:var(--text-color);">✖</button>
+                <div class="chat-header" style="padding:16px; display:flex; justify-content:space-between;">
+                    <span id="chat-other-name"></span>
+                    <button id="close-chat-btn" style="background:none; border:none; font-size:24px;">✖</button>
                 </div>
                 <div id="chat-messages" class="chat-messages"></div>
                 <div class="chat-input">
-                    <input type="text" id="chat-text" placeholder="Напишите что-то тёплое...">
-                    <button id="send-msg-btn">📤 Отправить</button>
+                    <input type="text" id="chat-text" placeholder="Сообщение...">
+                    <button id="send-msg-btn">📤</button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Blocked modal -->
-        <div id="blocked-modal" class="modal">
-            <div class="modal-content" style="padding:20px;">
-                <h3>🚫 Заблокированные пользователи</h3>
-                <div id="blocked-list-container" style="margin-top: 20px;"></div>
-                <button id="close-blocked-btn" style="margin-top:20px; padding:12px; border-radius:24px; background:var(--surface-light); border:none; cursor:pointer;">Закрыть</button>
             </div>
         </div>
 
@@ -473,198 +416,200 @@
     </div>
 
     <script>
-        // ==================== Live in Life — данные и логика ====================
-        let currentUserId = 1;
+        // ==================== Telegram Авторизация ====================
+        let currentUserId = null;
+        let currentTelegramId = null;
         let currentChatPairId = null;
-        
-        // Моковые пользователи (яркие, живые)
-        let users = JSON.parse(localStorage.getItem('liveinlife_users')) || {
-            1: {
-                id: 1,
-                name: 'Анна',
-                age: 26,
-                city: 'Москва',
-                search_min: 22,
-                search_max: 35,
-                photos: ['https://randomuser.me/api/portraits/women/68.jpg', 'https://randomuser.me/api/portraits/women/32.jpg'],
-                likes: [],
-                dislikes: [],
-                blocks: []
-            },
-            2: {
-                id: 2,
-                name: 'Дмитрий',
-                age: 29,
-                city: 'Москва',
-                search_min: 24,
-                search_max: 40,
-                photos: ['https://randomuser.me/api/portraits/men/32.jpg'],
-                likes: [],
-                dislikes: [],
-                blocks: []
-            },
-            3: {
-                id: 3,
-                name: 'Екатерина',
-                age: 24,
-                city: 'Санкт-Петербург',
-                search_min: 23,
-                search_max: 32,
-                photos: ['https://randomuser.me/api/portraits/women/45.jpg', 'https://randomuser.me/api/portraits/women/22.jpg'],
-                likes: [],
-                dislikes: [],
-                blocks: []
-            },
-            4: {
-                id: 4,
-                name: 'Максим',
-                age: 34,
-                city: 'Москва',
-                search_min: 26,
-                search_max: 38,
-                photos: ['https://randomuser.me/api/portraits/men/45.jpg'],
-                likes: [],
-                dislikes: [],
-                blocks: []
-            },
-            5: {
-                id: 5,
-                name: 'Ольга',
-                age: 31,
-                city: 'Москва',
-                search_min: 28,
-                search_max: 42,
-                photos: ['https://randomuser.me/api/portraits/women/88.jpg'],
-                likes: [],
-                dislikes: [],
-                blocks: []
-            },
-            6: {
-                id: 6,
-                name: 'Илья',
-                age: 27,
-                city: 'Москва',
-                search_min: 22,
-                search_max: 30,
-                photos: ['https://randomuser.me/api/portraits/men/56.jpg'],
-                likes: [],
-                dislikes: [],
-                blocks: []
+        let users = {};
+        let chats = [];
+        let messages = {};
+
+        function loadData() {
+            const stored = localStorage.getItem('liveinlife_data');
+            if (stored) {
+                const data = JSON.parse(stored);
+                users = data.users || {};
+                chats = data.chats || [];
+                messages = data.messages || {};
             }
-        };
-        
-        let chats = JSON.parse(localStorage.getItem('liveinlife_chats')) || [];
-        let messages = JSON.parse(localStorage.getItem('liveinlife_messages')) || {};
-        
+        }
+
         function saveData() {
-            localStorage.setItem('liveinlife_users', JSON.stringify(users));
-            localStorage.setItem('liveinlife_chats', JSON.stringify(chats));
-            localStorage.setItem('liveinlife_messages', JSON.stringify(messages));
+            localStorage.setItem('liveinlife_data', JSON.stringify({
+                users, chats, messages
+            }));
         }
-        
-        let currentProfile = users[currentUserId];
-        if (!currentProfile) {
-            // Сброс, если что-то пошло не так
-            localStorage.removeItem('liveinlife_users');
-            users = JSON.parse(localStorage.getItem('liveinlife_users')) || {
-                1: {
-                    id: 1, name: 'Анна', age: 26, city: 'Москва', search_min: 22, search_max: 35,
-                    photos: ['https://randomuser.me/api/portraits/women/68.jpg'], likes: [], dislikes: [], blocks: []
+
+        function getCurrentProfile() {
+            return users[currentUserId] || null;
+        }
+
+        function saveProfileToLocal() {
+            saveData();
+        }
+
+        // Инициализация после авторизации
+        function initAfterAuth(telegramUser) {
+            currentTelegramId = telegramUser.id;
+            // Загружаем данные
+            loadData();
+            
+            // Проверяем, есть ли пользователь с таким telegram_id
+            let existingUser = null;
+            for (let id in users) {
+                if (users[id].telegram_id === currentTelegramId) {
+                    existingUser = users[id];
+                    currentUserId = parseInt(id);
+                    break;
                 }
-            };
-            currentProfile = users[1];
+            }
+            
+            if (!existingUser) {
+                // Новый пользователь
+                currentUserId = Date.now();
+                users[currentUserId] = {
+                    id: currentUserId,
+                    telegram_id: currentTelegramId,
+                    name: telegramUser.first_name || telegramUser.username || 'Друг',
+                    age: 25,
+                    city: 'Москва',
+                    search_min: 22,
+                    search_max: 35,
+                    photos: ['https://randomuser.me/api/portraits/women/68.jpg'],
+                    likes: [],
+                    dislikes: [],
+                    blocks: []
+                };
+                saveData();
+            }
+            
+            // Обновляем UI
+            document.getElementById('user-name').innerText = users[currentUserId].name;
+            if (telegramUser.photo_url) {
+                document.getElementById('user-avatar').src = telegramUser.photo_url;
+            } else {
+                document.getElementById('user-avatar').src = 'https://avatars.githubusercontent.com/u/1?v=4';
+            }
+            
+            // Показываем основное приложение
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            
+            // Загружаем профиль и данные
+            loadProfileUI();
+            loadNextCard();
+            loadChats();
         }
-        
+
+        // Telegram Login Widget
+        function initTelegramAuth() {
+            // Если уже внутри Telegram Mini App
+            if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+                const tgUser = Telegram.WebApp.initDataUnsafe.user;
+                initAfterAuth({
+                    id: tgUser.id,
+                    first_name: tgUser.first_name,
+                    username: tgUser.username,
+                    photo_url: tgUser.photo_url
+                });
+                return;
+            }
+            
+            // Иначе показываем кнопку входа через Telegram Widget
+            const script = document.createElement('script');
+            script.src = 'https://telegram.org/js/telegram-widget.js?22';
+            script.async = true;
+            script.setAttribute('data-telegram-login', 'LiveInLifeBot'); // Замените на username вашего бота
+            script.setAttribute('data-size', 'large');
+            script.setAttribute('data-radius', '30');
+            script.setAttribute('data-request-access', 'write');
+            script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+            document.getElementById('telegram-login-container').appendChild(script);
+        }
+
+        window.onTelegramAuth = function(user) {
+            initAfterAuth(user);
+        };
+
+        // ==================== Остальная логика приложения ====================
+        function loadProfileUI() {
+            const profile = getCurrentProfile();
+            if (!profile) return;
+            document.getElementById('profile-name').value = profile.name || '';
+            document.getElementById('profile-age').value = profile.age || '';
+            document.getElementById('profile-city').value = profile.city || '';
+            const range = `${profile.search_min || 18}-${profile.search_max || 35}`;
+            document.getElementById('profile-search-range').value = range;
+            document.getElementById('profile-photo-urls').value = (profile.photos || []).join(', ');
+            renderPhotoPreviews((profile.photos || []).join(', '));
+        }
+
         function renderPhotoPreviews(urlsStr) {
             const container = document.getElementById('photos-preview');
             container.innerHTML = '';
-            const urlArray = urlsStr.split(',').map(u => u.trim()).filter(u => u);
-            urlArray.forEach(url => {
+            const urls = urlsStr.split(',').map(u => u.trim()).filter(u => u);
+            urls.forEach(url => {
                 const img = document.createElement('img');
                 img.src = url;
-                img.onerror = () => { img.src = 'https://via.placeholder.com/80?text=Photo'; };
                 container.appendChild(img);
             });
         }
-        
-        function loadProfile() {
-            document.getElementById('profile-name').value = currentProfile.name || '';
-            document.getElementById('profile-age').value = currentProfile.age || '';
-            document.getElementById('profile-city').value = currentProfile.city || '';
-            const range = `${currentProfile.search_min || 18}-${currentProfile.search_max || 35}`;
-            document.getElementById('profile-search-range').value = range;
-            const photosStr = (currentProfile.photos || []).join(', ');
-            document.getElementById('profile-photo-urls').value = photosStr;
-            renderPhotoPreviews(photosStr);
-        }
-        
+
         function saveProfile() {
-            currentProfile.name = document.getElementById('profile-name').value || 'Друг';
-            currentProfile.age = parseInt(document.getElementById('profile-age').value) || 25;
-            currentProfile.city = document.getElementById('profile-city').value || 'Москва';
+            const profile = getCurrentProfile();
+            if (!profile) return;
+            profile.name = document.getElementById('profile-name').value || 'Друг';
+            profile.age = parseInt(document.getElementById('profile-age').value) || 25;
+            profile.city = document.getElementById('profile-city').value || 'Москва';
             const range = document.getElementById('profile-search-range').value.split('-');
-            currentProfile.search_min = parseInt(range[0]);
-            currentProfile.search_max = parseInt(range[1]);
+            profile.search_min = parseInt(range[0]);
+            profile.search_max = parseInt(range[1]);
             const photoUrls = document.getElementById('profile-photo-urls').value;
-            currentProfile.photos = photoUrls.split(',').map(u => u.trim()).filter(u => u);
-            if (currentProfile.photos.length === 0) {
-                currentProfile.photos = ['https://randomuser.me/api/portraits/women/68.jpg'];
-            }
-            users[currentUserId] = currentProfile;
+            profile.photos = photoUrls.split(',').map(u => u.trim()).filter(u => u);
+            if (profile.photos.length === 0) profile.photos = ['https://randomuser.me/api/portraits/women/68.jpg'];
+            users[currentUserId] = profile;
             saveData();
-            alert('✨ Анкета сохранена! Живи в моменте.');
+            alert('Профиль сохранён!');
             loadNextCard();
         }
-        
+
         function getCandidates() {
-            const excluded = [...currentProfile.likes, ...currentProfile.dislikes, ...currentProfile.blocks];
+            const profile = getCurrentProfile();
+            if (!profile) return [];
+            const excluded = [...profile.likes, ...profile.dislikes, ...profile.blocks];
             return Object.values(users).filter(u => 
                 u.id !== currentUserId &&
                 !excluded.includes(u.id) &&
-                u.city === currentProfile.city &&
-                u.age >= currentProfile.search_min &&
-                u.age <= currentProfile.search_max &&
+                u.city === profile.city &&
+                u.age >= profile.search_min &&
+                u.age <= profile.search_max &&
                 !(users[u.id]?.blocks?.includes(currentUserId))
             );
         }
-        
+
         let currentCardUserId = null;
-        
+
         function renderCard(user) {
-            if (!user) return null;
             const stack = document.getElementById('card-stack');
             stack.innerHTML = '';
             const card = document.createElement('div');
             card.className = 'card';
-            const photoDiv = document.createElement('div');
-            photoDiv.className = 'card-photo';
-            const photoImg = document.createElement('img');
-            photoImg.style.width = '100%';
-            photoImg.style.height = '100%';
-            photoImg.style.objectFit = 'cover';
-            photoImg.src = user.photos?.[0] || 'https://via.placeholder.com/300x400?text=Live+in+Life';
-            photoImg.onerror = () => { photoImg.src = 'https://via.placeholder.com/300x400?text=❤️'; };
-            photoDiv.appendChild(photoImg);
-            const infoDiv = document.createElement('div');
-            infoDiv.className = 'card-info';
-            infoDiv.innerHTML = `<div class="card-name">${user.name}, ${user.age}</div><div class="card-city">📍 ${user.city}</div>`;
-            const btnsDiv = document.createElement('div');
-            btnsDiv.className = 'card-buttons';
-            const likeBtn = document.createElement('button');
-            likeBtn.innerHTML = '❤️';
-            likeBtn.className = 'like-btn';
-            const dislikeBtn = document.createElement('button');
-            dislikeBtn.innerHTML = '❌';
-            dislikeBtn.className = 'dislike-btn';
-            btnsDiv.append(likeBtn, dislikeBtn);
-            card.append(photoDiv, infoDiv, btnsDiv);
+            card.innerHTML = `
+                <img class="card-photo" src="${user.photos?.[0] || 'https://via.placeholder.com/300x400'}" onerror="this.src='https://via.placeholder.com/300x400'">
+                <div class="card-info">
+                    <div class="card-name">${user.name}, ${user.age}</div>
+                    <div class="card-city">📍 ${user.city}</div>
+                </div>
+                <div class="card-buttons">
+                    <button class="like-btn">❤️</button>
+                    <button class="dislike-btn">❌</button>
+                </div>
+            `;
             stack.appendChild(card);
-            
-            likeBtn.onclick = () => swipe('like', user.id);
-            dislikeBtn.onclick = () => swipe('dislike', user.id);
-            return card;
+            card.querySelector('.like-btn').onclick = () => swipe('like', user.id);
+            card.querySelector('.dislike-btn').onclick = () => swipe('dislike', user.id);
         }
-        
+
         function loadNextCard() {
             const candidates = getCandidates();
             if (candidates.length === 0) {
@@ -673,16 +618,14 @@
                 return;
             }
             document.getElementById('no-cards-message').style.display = 'none';
-            const nextUser = candidates[0];
-            currentCardUserId = nextUser.id;
-            renderCard(nextUser);
+            currentCardUserId = candidates[0].id;
+            renderCard(candidates[0]);
         }
-        
+
         function swipe(action, targetId) {
+            const profile = getCurrentProfile();
             if (action === 'like') {
-                if (!currentProfile.likes.includes(targetId)) {
-                    currentProfile.likes.push(targetId);
-                }
+                if (!profile.likes.includes(targetId)) profile.likes.push(targetId);
                 if (users[targetId]?.likes?.includes(currentUserId)) {
                     let existingChat = chats.find(c => 
                         (c.user1 === currentUserId && c.user2 === targetId) || 
@@ -692,25 +635,24 @@
                         const newChat = { id: Date.now(), user1: currentUserId, user2: targetId };
                         chats.push(newChat);
                         messages[newChat.id] = [];
-                        alert(`💖 Взаимная симпатия с ${users[targetId].name}! Чат открыт. Начните общение.`);
+                        alert(`💖 Взаимная симпатия с ${users[targetId].name}!`);
                     }
                     saveData();
                     loadChats();
                 }
             } else if (action === 'dislike') {
-                if (!currentProfile.dislikes.includes(targetId)) {
-                    currentProfile.dislikes.push(targetId);
-                }
+                if (!profile.dislikes.includes(targetId)) profile.dislikes.push(targetId);
             }
+            users[currentUserId] = profile;
             saveData();
             loadNextCard();
         }
-        
+
         function loadChats() {
             const myChats = chats.filter(c => c.user1 === currentUserId || c.user2 === currentUserId);
             const container = document.getElementById('chats-list');
             if (myChats.length === 0) {
-                container.innerHTML = '<div class="no-data">💬 Пока нет диалогов. Ставьте сердечки — и жизнь начнётся!</div>';
+                container.innerHTML = '<div class="no-data">💬 Пока нет диалогов</div>';
                 return;
             }
             container.innerHTML = '';
@@ -726,7 +668,7 @@
                 div.innerHTML = `
                     <div>
                         <div class="chat-name">${other.name}</div>
-                        <div class="chat-last-msg">${lastMsg?.text ? lastMsg.text.substring(0, 40) : 'Начните разговор ✨'}</div>
+                        <div class="chat-last-msg">${lastMsg?.text || 'Начните общение'}</div>
                     </div>
                     ${unread > 0 ? `<div class="unread-badge">${unread}</div>` : ''}
                 `;
@@ -734,14 +676,14 @@
                 container.appendChild(div);
             });
         }
-        
+
         function openChat(chatId, otherName) {
             currentChatPairId = chatId;
             document.getElementById('chat-other-name').innerText = otherName;
             document.getElementById('chat-modal').style.display = 'flex';
             loadMessages();
         }
-        
+
         function loadMessages() {
             const msgList = messages[currentChatPairId] || [];
             const container = document.getElementById('chat-messages');
@@ -752,108 +694,50 @@
                 msgDiv.innerText = msg.text;
                 container.appendChild(msgDiv);
             });
-            container.scrollTop = container.scrollHeight;
             if (messages[currentChatPairId]) {
                 messages[currentChatPairId].forEach(m => { if (m.from !== currentUserId) m.read = true; });
                 saveData();
             }
+            container.scrollTop = container.scrollHeight;
         }
-        
+
         function sendMessage() {
             const text = document.getElementById('chat-text').value.trim();
             if (!text || !currentChatPairId) return;
             if (!messages[currentChatPairId]) messages[currentChatPairId] = [];
-            messages[currentChatPairId].push({ from: currentUserId, text: text, timestamp: Date.now(), read: false });
+            messages[currentChatPairId].push({ from: currentUserId, text, timestamp: Date.now(), read: false });
             saveData();
             document.getElementById('chat-text').value = '';
             loadMessages();
             loadChats();
         }
-        
-        function showBlockedList() {
-            const blockedIds = currentProfile.blocks || [];
-            const container = document.getElementById('blocked-list-container');
-            if (blockedIds.length === 0) {
-                container.innerHTML = '<div class="no-data">Нет заблокированных. Живите без обид ✨</div>';
-            } else {
-                container.innerHTML = '';
-                blockedIds.forEach(uid => {
-                    const user = users[uid];
-                    if (user) {
-                        const div = document.createElement('div');
-                        div.style.display = 'flex';
-                        div.style.justifyContent = 'space-between';
-                        div.style.alignItems = 'center';
-                        div.style.padding = '12px';
-                        div.style.borderBottom = '1px solid var(--border-color)';
-                        div.innerHTML = `
-                            <span>${user.name}</span>
-                            <button onclick="unblockUser(${uid})" style="padding:6px 12px; border-radius:20px; background:var(--primary); color:white; border:none;">Разблокировать</button>
-                        `;
-                        container.appendChild(div);
-                    }
-                });
-            }
-            document.getElementById('blocked-modal').style.display = 'flex';
-        }
-        
-        function unblockUser(blockedId) {
-            currentProfile.blocks = currentProfile.blocks.filter(id => id !== blockedId);
-            saveData();
-            showBlockedList();
-            loadNextCard();
-        }
-        
+
         function deleteAccount() {
-            if (confirm('Удалить аккаунт навсегда? Все чаты исчезнут. Жизнь продолжается — можно начать заново.')) {
+            if (confirm('Удалить аккаунт навсегда?')) {
                 delete users[currentUserId];
-                localStorage.removeItem('liveinlife_users');
-                localStorage.removeItem('liveinlife_chats');
-                localStorage.removeItem('liveinlife_messages');
-                alert('Аккаунт удалён. Обновите страницу, чтобы создать новую анкету.');
+                saveData();
+                alert('Аккаунт удалён. Обновите страницу.');
                 location.reload();
             }
         }
-        
+
         function initTheme() {
-            const savedTheme = localStorage.getItem('liveinlife_theme') || 'light';
-            document.body.className = savedTheme;
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.textContent = savedTheme === 'light' ? '🌙' : '☀️';
-            themeToggle.onclick = () => {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.body.className = saved;
+            document.getElementById('theme-toggle').onclick = () => {
                 const newTheme = document.body.className === 'light' ? 'dark' : 'light';
                 document.body.className = newTheme;
-                localStorage.setItem('liveinlife_theme', newTheme);
-                themeToggle.textContent = newTheme === 'light' ? '🌙' : '☀️';
+                localStorage.setItem('theme', newTheme);
             };
         }
-        
-        function initTelegram() {
-            if (window.Telegram && Telegram.WebApp) {
-                const tg = Telegram.WebApp;
-                tg.expand();
-                tg.ready();
-                document.body.className = tg.colorScheme === 'dark' ? 'dark' : 'light';
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    const teleUser = tg.initDataUnsafe.user;
-                    currentProfile.name = teleUser.first_name || teleUser.username || 'Гость';
-                    document.getElementById('profile-name').value = currentProfile.name;
-                }
-            }
-        }
-        
+
         // Event listeners
-        document.getElementById('save-profile-btn').addEventListener('click', saveProfile);
-        document.getElementById('send-msg-btn').addEventListener('click', sendMessage);
-        document.getElementById('close-chat-btn').addEventListener('click', () => {
+        document.getElementById('save-profile-btn')?.addEventListener('click', saveProfile);
+        document.getElementById('send-msg-btn')?.addEventListener('click', sendMessage);
+        document.getElementById('close-chat-btn')?.addEventListener('click', () => {
             document.getElementById('chat-modal').style.display = 'none';
-            currentChatPairId = null;
         });
-        document.getElementById('blocked-list-btn').addEventListener('click', showBlockedList);
-        document.getElementById('close-blocked-btn').addEventListener('click', () => {
-            document.getElementById('blocked-modal').style.display = 'none';
-        });
-        document.getElementById('delete-account-btn').addEventListener('click', deleteAccount);
+        document.getElementById('delete-account-btn')?.addEventListener('click', deleteAccount);
         
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -863,22 +747,14 @@
                 document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
                 document.getElementById(`${tab}-tab`).classList.add('active');
                 if (tab === 'chats') loadChats();
-                if (tab === 'profile') loadProfile();
+                if (tab === 'profile') loadProfileUI();
                 if (tab === 'cards') loadNextCard();
             });
         });
-        
+
+        // Запуск
         initTheme();
-        initTelegram();
-        loadProfile();
-        loadNextCard();
-        loadChats();
-        
-        setInterval(() => {
-            if (document.querySelector('.tab-btn[data-tab="chats"]').classList.contains('active')) {
-                loadChats();
-            }
-        }, 4000);
+        initTelegramAuth();
     </script>
 </body>
 </html>
