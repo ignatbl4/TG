@@ -1,708 +1,347 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Live in Life | Знакомства</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>ТЗ · Telegram Mini App · Учёт инструментов</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg-color, #fef9f4);
-            color: var(--text-color, #2d3436);
-            overflow-x: hidden;
-        }
+    body {
+      background: #f0f2f5;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+      color: #1e293b;
+      line-height: 1.5;
+    }
 
-        body.dark {
-            --bg-color: #121212;
-            --surface-color: #1e1e1e;
-            --surface-light: #2d2d2d;
-            --text-color: #ffffff;
-            --text-secondary: #aaaaaa;
-            --border-color: #333;
-            --primary: #ff6b6b;
-            --primary-dark: #e55555;
-        }
+    .paper {
+      max-width: 1000px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-        body.light {
-            --bg-color: #fef9f4;
-            --surface-color: #ffffff;
-            --surface-light: #f8f8f8;
-            --text-color: #2d3436;
-            --text-secondary: #636e72;
-            --border-color: #e0e0e0;
-            --primary: #ff6b6b;
-            --primary-dark: #e55555;
-        }
+    /* ----- header ----- */
+    .head {
+      background: #0f172a;
+      padding: 2rem 2.5rem;
+      color: white;
+    }
 
-        .auth-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            padding: 20px;
-            text-align: center;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-        }
+    .head .label {
+      display: inline-block;
+      background: #2dd4bf;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      padding: 0.3rem 1rem;
+      border-radius: 2rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
 
-        .auth-screen h1 { font-size: 42px; margin-bottom: 16px; }
-        .auth-screen p { font-size: 18px; margin-bottom: 40px; opacity: 0.9; }
+    .head h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
 
-        .telegram-login-btn {
-            display: inline-block;
-            background: white;
-            color: #2d3436;
-            padding: 14px 32px;
-            border-radius: 60px;
-            font-size: 18px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            border: none;
-            cursor: pointer;
-        }
+    .head .sub {
+      font-size: 1rem;
+      opacity: 0.75;
+      margin-bottom: 1.2rem;
+    }
 
-        .telegram-login-btn:hover { transform: scale(1.02); }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 1.2rem;
+      margin-top: 0.8rem;
+    }
 
-        .main-app { display: none; }
+    /* ----- content ----- */
+    .content {
+      padding: 2.2rem 2.5rem 2.5rem;
+    }
 
-        .app-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            padding: 16px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 2.2rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(255,255,255,0.2);
-            padding: 6px 12px;
-            border-radius: 40px;
-        }
+    h2:first-of-type {
+      margin-top: 0;
+    }
 
-        .user-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
-        .user-name { font-size: 14px; }
+    .num {
+      background: #0f172a;
+      color: white;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.7rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+    }
 
-        .tabs {
-            display: flex;
-            background: var(--surface-color);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
+    h3 {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin: 1.8rem 0 0.8rem;
+      color: #0f172a;
+    }
 
-        .tab-btn {
-            flex: 1;
-            padding: 14px;
-            font-size: 15px;
-            background: none;
-            border: none;
-            color: var(--text-color);
-            cursor: pointer;
-            font-weight: 500;
-        }
+    p {
+      margin-bottom: 1rem;
+      color: #334155;
+    }
 
-        .tab-btn.active {
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
-        }
+    .card-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.2rem;
+      margin: 1.2rem 0 1.8rem;
+    }
 
-        .tab-content { display: none; padding: 16px; height: calc(100vh - 110px); overflow-y: auto; }
-        .tab-content.active { display: block; }
+    .card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 1.2rem;
+      padding: 1.3rem;
+    }
 
-        #card-stack {
-            position: relative;
-            width: 100%;
-            max-width: 360px;
-            height: 540px;
-            margin: 0 auto;
-        }
+    .card strong {
+      display: block;
+      font-size: 1.1rem;
+      margin-bottom: 0.6rem;
+      color: #0f172a;
+    }
 
-        .card {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: var(--surface-color);
-            border-radius: 32px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            cursor: grab;
-        }
+    ul, ol {
+      padding-left: 1.5rem;
+      margin-bottom: 1.2rem;
+      color: #1e293b;
+    }
 
-        .card-photo { width: 100%; height: 65%; object-fit: cover; }
-        .card-info { padding: 20px; }
-        .card-name { font-size: 26px; font-weight: bold; }
-        .card-age, .card-city { font-size: 16px; color: var(--text-secondary); margin-top: 4px; }
+    li {
+      margin-bottom: 0.45rem;
+    }
 
-        .card-buttons {
-            display: flex;
-            justify-content: space-around;
-            padding: 16px;
-            gap: 24px;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0 1.8rem;
+      font-size: 0.9rem;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px #e2e8f0;
+    }
 
-        .like-btn, .dislike-btn {
-            font-size: 38px;
-            background: var(--surface-light);
-            border: none;
-            cursor: pointer;
-            padding: 12px 28px;
-            border-radius: 60px;
-        }
+    th {
+      background: #0f172a;
+      color: white;
+      padding: 0.8rem 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
 
-        .like-btn { color: var(--primary); }
-        .dislike-btn { color: var(--text-secondary); }
+    td {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      background: white;
+    }
 
-        .chat-item {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-        }
+    .tech-badge {
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 0.2rem 0.8rem;
+      border-radius: 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-block;
+      margin: 0.2rem;
+    }
 
-        .unread-badge {
-            background: var(--primary);
-            color: white;
-            border-radius: 20px;
-            padding: 4px 10px;
-            font-size: 12px;
-        }
+    .callout {
+      background: #fef9c3;
+      border-left: 5px solid #eab308;
+      padding: 1rem 1.3rem;
+      border-radius: 0.8rem;
+      margin: 1.5rem 0;
+      font-weight: 500;
+    }
 
-        .profile-form input, .profile-form select, .profile-form button {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            background: var(--surface-color);
-            color: var(--text-color);
-        }
+    .footer-note {
+      margin-top: 2rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid #e2e8f0;
+      font-size: 0.85rem;
+      color: #475569;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
 
-        .profile-form button {
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .photos-preview { display: flex; gap: 10px; flex-wrap: wrap; }
-        .photos-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 16px; }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 1000;
-        }
-
-        .modal-content {
-            width: 100%;
-            height: 100%;
-            background: var(--bg-color);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-messages { flex: 1; overflow-y: auto; padding: 16px; }
-        .message {
-            max-width: 75%;
-            padding: 10px 14px;
-            border-radius: 20px;
-            background: var(--surface-light);
-            margin: 8px 0;
-        }
-        .message.own { background: var(--primary); color: white; margin-left: auto; }
-
-        .chat-input { display: flex; padding: 12px; gap: 8px; }
-        .chat-input input { flex: 1; padding: 12px; border-radius: 28px; border: 1px solid var(--border-color); }
-
-        .theme-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--surface-color);
-            border-radius: 40px;
-            padding: 10px 16px;
-            cursor: pointer;
-            z-index: 20;
-        }
-
-        .no-data { text-align: center; padding: 50px; color: var(--text-secondary); }
-        .logout-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-    </style>
+    @media (max-width: 550px) {
+      body { padding: 0.5rem; }
+      .head, .content { padding: 1.5rem; }
+      .head h1 { font-size: 1.6rem; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Экран авторизации -->
-    <div id="auth-screen" class="auth-screen">
-        <h1>✨ Live in Life ✨</h1>
-        <p>Знакомства для живого общения</p>
-        <button class="telegram-login-btn" id="telegram-login-btn">
-            🔑 Войти через Telegram
-        </button>
-        <div style="margin-top: 24px; font-size: 14px; opacity: 0.7;">
-            Нажмите для входа — это быстро и безопасно
-        </div>
+  <div class="paper">
+    <div class="head">
+      <span class="label">Telegram Mini App</span>
+      <h1>📋 Учёт инструментов</h1>
+      <div class="sub">Сканирование QR-кода · Регистрация выдачи / возврата</div>
+      <div class="meta">
+        <span>📅 Версия 1.2 · 26 апреля 2026</span>
+        <span>👤 Заказчик: _______________</span>
+        <span>⚙️ Тип: Web App (бот)</span>
+      </div>
     </div>
 
-    <!-- Основное приложение -->
-    <div id="main-app" class="main-app">
-        <div class="app-header">
-            <h2>✨ Live in Life</h2>
-            <div class="user-info" id="user-info">
-                <img class="user-avatar" id="user-avatar" src="" alt="">
-                <span class="user-name" id="user-name"></span>
-                <button class="logout-btn" id="logout-btn">Выйти</button>
-            </div>
-        </div>
+    <div class="content">
+      <!-- 1. Цель -->
+      <h2><span class="num">1</span> Цель продукта</h2>
+      <p>Создать веб-приложение, запускаемое внутри Telegram (Mini App), которое полностью заменяет бумажный журнал учёта инструментов. Каждый инструмент маркируется уникальным QR-кодом. Сотрудник через смартфон сканирует код и в одно нажатие фиксирует: <strong>«я взял»</strong> или <strong>«я вернул»</strong>. Руководитель видит актуальное расположение всего инструмента.</p>
 
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="cards">💘 Встречи</button>
-            <button class="tab-btn" data-tab="chats">💬 Диалоги</button>
-            <button class="tab-btn" data-tab="profile">👤 Профиль</button>
+      <!-- 2. Роли -->
+      <h2><span class="num">2</span> Роли пользователей</h2>
+      <div class="card-row">
+        <div class="card">
+          <strong>🔧 Сотрудник</strong>
+          <ul>
+            <li>Сканирует QR инструмента</li>
+            <li>Нажимает «Взял» / «Вернул»</li>
+            <li>Видит свою историю</li>
+          </ul>
         </div>
-
-        <div id="cards-tab" class="tab-content active">
-            <div class="cards-container">
-                <div id="card-stack"></div>
-                <div id="no-cards-message" class="no-data" style="display: none;">✨ Нет новых встреч</div>
-            </div>
+        <div class="card">
+          <strong>🛡️ Администратор</strong>
+          <ul>
+            <li>Добавляет / редактирует инструменты</li>
+            <li>Генерирует QR-наклейки</li>
+            <li>Видит полную историю, может принудительно вернуть инструмент</li>
+          </ul>
         </div>
+      </div>
 
-        <div id="chats-tab" class="tab-content">
-            <div id="chats-list"></div>
-        </div>
+      <!-- 3. Бизнес-логика -->
+      <h2><span class="num">3</span> Основной сценарий (User Flow)</h2>
+      
+      <h3>3.1 Выдача инструмента</h3>
+      <ol>
+        <li>Сотрудник открывает Mini App в Telegram.</li>
+        <li>Нажимает большую кнопку <strong>«Сканировать QR»</strong>.</li>
+        <li>Камера считывает код, содержащий уникальный ID (например <code>INSTR-0042</code>).</li>
+        <li>Система показывает карточку: фото дрели, название «Перфоратор Bosch GBH», статус.</li>
+        <li><strong>Если статус «На складе»</strong> → активна зеленая кнопка <strong>«Взять»</strong>. После нажатия инструмент числится за сотрудником.</li>
+        <li><strong>Если статус «На руках»</strong> → система выводит предупреждение: «Инструмент у @IvanPetrov. Обратитесь к администратору». Кнопка «Взять» заблокирована (для админа доступна кнопка «Принудительный возврат»).</li>
+      </ol>
 
-        <div id="profile-tab" class="tab-content">
-            <div class="profile-form">
-                <h3>Моя анкета</h3>
-                <label>🌟 Имя</label>
-                <input type="text" id="profile-name" placeholder="Как вас зовут?">
-                <label>📅 Возраст</label>
-                <input type="number" id="profile-age" placeholder="18">
-                <label>📍 Город</label>
-                <input type="text" id="profile-city" placeholder="Москва">
-                <label>🎯 Ищу возраст</label>
-                <select id="profile-search-range">
-                    <option value="18-25">18–25 лет</option>
-                    <option value="25-35">25–35 лет</option>
-                    <option value="35-45">35–45 лет</option>
-                    <option value="45-55">45–55 лет</option>
-                    <option value="55-70">55–70 лет</option>
-                </select>
-                <label>📸 Фото (ссылки через запятую)</label>
-                <input type="text" id="profile-photo-urls" placeholder="https://example.com/photo.jpg">
-                <div class="photos-preview" id="photos-preview"></div>
-                <button id="save-profile-btn">💾 Сохранить</button>
-                <button id="delete-account-btn" style="background:#c0392b;">🗑️ Удалить аккаунт</button>
-            </div>
-        </div>
+      <h3>3.2 Возврат инструмента</h3>
+      <ol>
+        <li>Сотрудник сканирует тот же QR-код.</li>
+        <li>Система видит, что инструмент находится именно у этого пользователя.</li>
+        <li>Появляется синяя кнопка <strong>«Вернуть на склад»</strong>.</li>
+        <li>После подтверждения инструмент снова доступен для всех.</li>
+      </ol>
 
-        <div id="chat-modal" class="modal">
-            <div class="modal-content">
-                <div style="padding:16px; display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color);">
-                    <span id="chat-other-name" style="font-weight: bold;"></span>
-                    <button id="close-chat-btn" style="background:none; border:none; font-size:24px; cursor:pointer;">✖</button>
-                </div>
-                <div id="chat-messages" class="chat-messages"></div>
-                <div class="chat-input">
-                    <input type="text" id="chat-text" placeholder="Сообщение...">
-                    <button id="send-msg-btn">📤</button>
-                </div>
-            </div>
-        </div>
+      <div class="callout">
+        ⚡ <strong>Важное правило:</strong> Один сотрудник может взять инструмент только в одном экземпляре. Возврат должен сделать тот, кто брал (кроме случаев с админом).
+      </div>
 
-        <div class="theme-toggle" id="theme-toggle">🌓</div>
+      <!-- 4. Админ-панель -->
+      <h2><span class="num">4</span> Панель администратора</h2>
+      <ul>
+        <li><strong>Управление номенклатурой:</strong> Добавление нового инструмента (название, инвентарный номер, описание, фото).</li>
+        <li><strong>QR-генератор:</strong> По нажатию одной кнопки скачать PNG-файл с QR-кодом для печати на наклейку (размер 30x30 мм). В коде зашита строка-идентификатор.</li>
+        <li><strong>Живая таблица:</strong> Все инструменты с подсветкой статуса (зеленый/красный), фильтр «только взятые», поиск по названию.</li>
+        <li><strong>Журнал событий:</strong> Хронология всех действий с датой и временем. Возможность выгрузить в CSV.</li>
+      </ul>
+
+      <!-- 5. Архитектура -->
+      <h2><span class="num">5</span> Техническая архитектура</h2>
+      <table>
+        <tr><th>Слой</th><th>Технология</th><th>Назначение</th></tr>
+        <tr><td>📱 Клиент</td><td>HTML5, CSS3, JavaScript (Vanilla или React)</td><td>Интерфейс внутри Telegram. Использует Telegram Web App SDK.</td></tr>
+        <tr><td>📷 Сканер</td><td>html5-qrcode (библиотека) или API камеры</td><td>Считывание QR без выхода из приложения.</td></tr>
+        <tr><td>⚙️ Сервер</td><td>Python (FastAPI) / Node.js (Express)</td><td>REST API, авторизация, бизнес-логика.</td></tr>
+        <tr><td>🗄️ База</td><td>PostgreSQL / Supabase</td><td>Хранение пользователей, инструментов, транзакций.</td></tr>
+        <tr><td>☁️ Хостинг</td><td>VPS / Vercel / Cloud Run</td><td>Обязателен HTTPS (требование Telegram и камеры).</td></tr>
+      </table>
+
+      <!-- 6. Структура данных -->
+      <h2><span class="num">6</span> Структура базы данных</h2>
+      <table>
+        <thead><tr><th>Таблица</th><th>Ключевые поля</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>users</strong></td>
+            <td><code>telegram_id (bigint, PK)</code>, <code>username</code>, <code>full_name</code>, <code>role</code> (user/admin), <code>created_at</code></td>
+          </tr>
+          <tr>
+            <td><strong>tools</strong></td>
+            <td><code>id (uuid, PK)</code>, <code>qr_string (unique)</code>, <code>name</code>, <code>description</code>, <code>image_url</code>, <code>status</code> ('available','taken'), <code>current_holder</code> (FK users)</td>
+          </tr>
+          <tr>
+            <td><strong>log</strong></td>
+            <td><code>id</code>, <code>tool_id</code>, <code>user_id</code>, <code>action</code> ('take','return'), <code>timestamp</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 7. Дизайн и UX -->
+      <h2><span class="num">7</span> Требования к интерфейсу (HTML)</h2>
+      <ul>
+        <li><strong>Нативный стиль Telegram:</strong> Использовать цветовые переменные <code>var(--tg-theme-bg-color)</code>, поддержка светлой и темной темы.</li>
+        <li><strong>Мобильная ориентация:</strong> Запрет горизонтального скролла, кнопки не менее 44px высотой.</li>
+        <li><strong>Главный экран:</strong> 70% пространства занимает виджет сканера или кнопка «Открыть сканер».</li>
+        <li><strong>Уведомления:</strong> Все действия (успешный возврат, ошибка) показываются через всплывающие окна (Toast) или <code>window.Telegram.WebApp.showPopup</code>.</li>
+      </ul>
+
+      <!-- 8. Этапы -->
+      <h2><span class="num">8</span> Этапы разработки</h2>
+      <ol>
+        <li><strong>Дизайн и верстка (HTML/CSS):</strong> 3 экрана – сканер, карточка, история.</li>
+        <li><strong>База данных и API:</strong> CRUD инструментов, эндпоинты выдачи/возврата.</li>
+        <li><strong>Интеграция Telegram SDK:</strong> Авторизация, настройка шапки.</li>
+        <li><strong>Логика QR:</strong> Подключение библиотеки сканирования, валидация.</li>
+        <li><strong>Админ-раздел:</strong> Таблица, генератор QR.</li>
+        <li><strong>Тестирование и деплой.</strong></li>
+      </ol>
+
+      <div class="footer-note">
+        <span>📌 Приложение должно открываться по команде бота и через кнопку меню.</span>
+        <span>© 2026 ToolTracker Bot</span>
+      </div>
     </div>
-
-    <script>
-        // ==================== Авторизация через редирект на бота ====================
-        let currentUserId = null;
-        let currentTelegramId = null;
-        let currentChatPairId = null;
-        let users = {};
-        let chats = [];
-        let messages = {};
-
-        const BOT_USERNAME = 'Live_in_Life_bot';
-
-        function loadData() {
-            const stored = localStorage.getItem('liveinlife_data');
-            if (stored) {
-                const data = JSON.parse(stored);
-                users = data.users || {};
-                chats = data.chats || [];
-                messages = data.messages || {};
-            }
-        }
-
-        function saveData() {
-            localStorage.setItem('liveinlife_data', JSON.stringify({ users, chats, messages }));
-        }
-
-        function getCurrentProfile() {
-            return users[currentUserId] || null;
-        }
-
-        // Сохранение пользователя после авторизации
-        function saveUserFromTelegram(telegramUser) {
-            currentTelegramId = telegramUser.id;
-            loadData();
-            
-            let existingUser = null;
-            for (let id in users) {
-                if (users[id].telegram_id === currentTelegramId) {
-                    existingUser = users[id];
-                    currentUserId = parseInt(id);
-                    break;
-                }
-            }
-            
-            if (!existingUser) {
-                currentUserId = Date.now();
-                users[currentUserId] = {
-                    id: currentUserId,
-                    telegram_id: currentTelegramId,
-                    name: telegramUser.first_name || telegramUser.username || 'Друг',
-                    age: 25,
-                    city: 'Москва',
-                    search_min: 22,
-                    search_max: 35,
-                    photos: ['https://randomuser.me/api/portraits/women/68.jpg'],
-                    likes: [],
-                    dislikes: [],
-                    blocks: []
-                };
-                saveData();
-            }
-            
-            document.getElementById('user-name').innerText = users[currentUserId].name;
-            document.getElementById('user-avatar').src = telegramUser.photo_url || 'https://avatars.githubusercontent.com/u/1?v=4';
-            
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            
-            loadProfileUI();
-            loadNextCard();
-            loadChats();
-        }
-
-        // Проверка параметров в URL (после редиректа от бота)
-        function checkTelegramAuth() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const tgId = urlParams.get('tg_id');
-            const tgName = urlParams.get('tg_name');
-            const tgUsername = urlParams.get('tg_username');
-            
-            if (tgId && tgName) {
-                saveUserFromTelegram({
-                    id: parseInt(tgId),
-                    first_name: tgName,
-                    username: tgUsername,
-                    photo_url: null
-                });
-                // Очищаем URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-                return true;
-            }
-            return false;
-        }
-
-        // Кнопка входа — редирект на бота
-        function loginWithTelegram() {
-            const redirectUrl = window.location.href.split('?')[0];
-            const botUrl = `https://t.me/${BOT_USERNAME}?start=auth_${encodeURIComponent(redirectUrl)}`;
-            window.location.href = botUrl;
-        }
-
-        // Эмуляция для теста (если нет бэкенда, можно ввести демо-пользователя)
-        function demoLogin() {
-            saveUserFromTelegram({
-                id: 123456,
-                first_name: 'Тестовый',
-                username: 'test_user',
-                photo_url: null
-            });
-        }
-
-        // ==================== Остальная логика ====================
-        function loadProfileUI() {
-            const profile = getCurrentProfile();
-            if (!profile) return;
-            document.getElementById('profile-name').value = profile.name || '';
-            document.getElementById('profile-age').value = profile.age || '';
-            document.getElementById('profile-city').value = profile.city || '';
-            const range = `${profile.search_min || 18}-${profile.search_max || 35}`;
-            document.getElementById('profile-search-range').value = range;
-            document.getElementById('profile-photo-urls').value = (profile.photos || []).join(', ');
-            renderPhotoPreviews((profile.photos || []).join(', '));
-        }
-
-        function renderPhotoPreviews(urlsStr) {
-            const container = document.getElementById('photos-preview');
-            container.innerHTML = '';
-            if (!urlsStr) return;
-            const urls = urlsStr.split(',').map(u => u.trim()).filter(u => u);
-            urls.forEach(url => {
-                const img = document.createElement('img');
-                img.src = url;
-                img.onerror = () => { img.src = 'https://via.placeholder.com/80?text=Photo'; };
-                container.appendChild(img);
-            });
-        }
-
-        function saveProfile() {
-            const profile = getCurrentProfile();
-            if (!profile) return;
-            profile.name = document.getElementById('profile-name').value || 'Друг';
-            profile.age = parseInt(document.getElementById('profile-age').value) || 25;
-            profile.city = document.getElementById('profile-city').value || 'Москва';
-            const range = document.getElementById('profile-search-range').value.split('-');
-            profile.search_min = parseInt(range[0]);
-            profile.search_max = parseInt(range[1]);
-            const photoUrls = document.getElementById('profile-photo-urls').value;
-            profile.photos = photoUrls.split(',').map(u => u.trim()).filter(u => u);
-            if (profile.photos.length === 0) profile.photos = ['https://randomuser.me/api/portraits/women/68.jpg'];
-            users[currentUserId] = profile;
-            saveData();
-            alert('✅ Профиль сохранён!');
-            loadNextCard();
-        }
-
-        function getCandidates() {
-            const profile = getCurrentProfile();
-            if (!profile) return [];
-            const excluded = [...profile.likes, ...profile.dislikes, ...profile.blocks];
-            return Object.values(users).filter(u => 
-                u.id !== currentUserId &&
-                !excluded.includes(u.id) &&
-                u.city === profile.city &&
-                u.age >= profile.search_min &&
-                u.age <= profile.search_max &&
-                !(users[u.id]?.blocks?.includes(currentUserId))
-            );
-        }
-
-        let currentCardUserId = null;
-
-        function renderCard(user) {
-            const stack = document.getElementById('card-stack');
-            stack.innerHTML = '';
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <img class="card-photo" src="${user.photos?.[0] || 'https://via.placeholder.com/300x400'}" onerror="this.src='https://via.placeholder.com/300x400'">
-                <div class="card-info">
-                    <div class="card-name">${user.name}, ${user.age}</div>
-                    <div class="card-city">📍 ${user.city}</div>
-                </div>
-                <div class="card-buttons">
-                    <button class="like-btn">❤️</button>
-                    <button class="dislike-btn">❌</button>
-                </div>
-            `;
-            stack.appendChild(card);
-            card.querySelector('.like-btn').onclick = () => swipe('like', user.id);
-            card.querySelector('.dislike-btn').onclick = () => swipe('dislike', user.id);
-        }
-
-        function loadNextCard() {
-            const candidates = getCandidates();
-            if (candidates.length === 0) {
-                document.getElementById('no-cards-message').style.display = 'block';
-                document.getElementById('card-stack').innerHTML = '';
-                return;
-            }
-            document.getElementById('no-cards-message').style.display = 'none';
-            currentCardUserId = candidates[0].id;
-            renderCard(candidates[0]);
-        }
-
-        function swipe(action, targetId) {
-            const profile = getCurrentProfile();
-            if (action === 'like') {
-                if (!profile.likes.includes(targetId)) profile.likes.push(targetId);
-                if (users[targetId]?.likes?.includes(currentUserId)) {
-                    let existingChat = chats.find(c => 
-                        (c.user1 === currentUserId && c.user2 === targetId) || 
-                        (c.user1 === targetId && c.user2 === currentUserId)
-                    );
-                    if (!existingChat) {
-                        const newChat = { id: Date.now(), user1: currentUserId, user2: targetId };
-                        chats.push(newChat);
-                        messages[newChat.id] = [];
-                        alert(`💖 Взаимная симпатия с ${users[targetId].name}! Чат открыт.`);
-                    }
-                    saveData();
-                    loadChats();
-                }
-            } else if (action === 'dislike') {
-                if (!profile.dislikes.includes(targetId)) profile.dislikes.push(targetId);
-            }
-            users[currentUserId] = profile;
-            saveData();
-            loadNextCard();
-        }
-
-        function loadChats() {
-            const myChats = chats.filter(c => c.user1 === currentUserId || c.user2 === currentUserId);
-            const container = document.getElementById('chats-list');
-            if (myChats.length === 0) {
-                container.innerHTML = '<div class="no-data">💬 Пока нет диалогов. Ставьте сердечки!</div>';
-                return;
-            }
-            container.innerHTML = '';
-            myChats.forEach(chat => {
-                const otherId = chat.user1 === currentUserId ? chat.user2 : chat.user1;
-                const other = users[otherId];
-                if (!other) return;
-                const chatMessages = messages[chat.id] || [];
-                const lastMsg = chatMessages[chatMessages.length - 1];
-                const unread = chatMessages.filter(m => m.from !== currentUserId && !m.read).length;
-                const div = document.createElement('div');
-                div.className = 'chat-item';
-                div.innerHTML = `
-                    <div>
-                        <div class="chat-name">${other.name}</div>
-                        <div class="chat-last-msg">${lastMsg?.text || 'Начните общение ✨'}</div>
-                    </div>
-                    ${unread > 0 ? `<div class="unread-badge">${unread}</div>` : ''}
-                `;
-                div.onclick = () => openChat(chat.id, other.name);
-                container.appendChild(div);
-            });
-        }
-
-        function openChat(chatId, otherName) {
-            currentChatPairId = chatId;
-            document.getElementById('chat-other-name').innerText = otherName;
-            document.getElementById('chat-modal').style.display = 'flex';
-            loadMessages();
-        }
-
-        function loadMessages() {
-            const msgList = messages[currentChatPairId] || [];
-            const container = document.getElementById('chat-messages');
-            container.innerHTML = '';
-            msgList.forEach(msg => {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = `message ${msg.from === currentUserId ? 'own' : ''}`;
-                msgDiv.innerText = msg.text;
-                container.appendChild(msgDiv);
-            });
-            if (messages[currentChatPairId]) {
-                messages[currentChatPairId].forEach(m => { if (m.from !== currentUserId) m.read = true; });
-                saveData();
-            }
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function sendMessage() {
-            const text = document.getElementById('chat-text').value.trim();
-            if (!text || !currentChatPairId) return;
-            if (!messages[currentChatPairId]) messages[currentChatPairId] = [];
-            messages[currentChatPairId].push({ from: currentUserId, text, timestamp: Date.now(), read: false });
-            saveData();
-            document.getElementById('chat-text').value = '';
-            loadMessages();
-            loadChats();
-        }
-
-        function deleteAccount() {
-            if (confirm('🗑️ Удалить аккаунт навсегда? Все данные будут потеряны.')) {
-                delete users[currentUserId];
-                saveData();
-                alert('Аккаунт удалён.');
-                logout();
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('liveinlife_data');
-            location.reload();
-        }
-
-        function initTheme() {
-            const saved = localStorage.getItem('theme') || 'light';
-            document.body.className = saved;
-            document.getElementById('theme-toggle').onclick = () => {
-                const newTheme = document.body.className === 'light' ? 'dark' : 'light';
-                document.body.className = newTheme;
-                localStorage.setItem('theme', newTheme);
-            };
-        }
-
-        // Event listeners
-        document.getElementById('telegram-login-btn')?.addEventListener('click', loginWithTelegram);
-        document.getElementById('save-profile-btn')?.addEventListener('click', saveProfile);
-        document.getElementById('send-msg-btn')?.addEventListener('click', sendMessage);
-        document.getElementById('close-chat-btn')?.addEventListener('click', () => {
-            document.getElementById('chat-modal').style.display = 'none';
-            currentChatPairId = null;
-        });
-        document.getElementById('delete-account-btn')?.addEventListener('click', deleteAccount);
-        document.getElementById('logout-btn')?.addEventListener('click', logout);
-        
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const tab = btn.getAttribute('data-tab');
-                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-                document.getElementById(`${tab}-tab`).classList.add('active');
-                if (tab === 'chats') loadChats();
-                if (tab === 'profile') loadProfileUI();
-                if (tab === 'cards') loadNextCard();
-            });
-        });
-
-        // Запуск
-        initTheme();
-        loadData();
-        
-        // Сначала проверяем параметры в URL (от бота)
-        if (!checkTelegramAuth()) {
-            // Проверяем, есть ли уже сохранённый пользователь
-            for (let id in users) {
-                if (users[id]) {
-                    currentUserId = parseInt(id);
-                    currentTelegramId = users[id].telegram_id;
-                    document.getElementById('user-name').innerText = users[id].name;
-                    document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('main-app').style.display = 'block';
-                    loadProfileUI();
-                    loadNextCard();
-                    loadChats();
-                    break;
-                }
-            }
-        }
-        
-        // Демо-режим для теста (раскомментируйте, если нужно протестировать без бота)
-        // setTimeout(() => { if (!currentUserId) demoLogin(); }, 1000);
-    </script>
+  </div>
 </body>
 </html>
