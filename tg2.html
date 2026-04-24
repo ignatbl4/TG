@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Live in Life | Знакомства с авторизацией</title>
+    <title>Live in Life | Знакомства</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -36,7 +36,6 @@
             --primary-dark: #e55555;
         }
 
-        /* Auth screen */
         .auth-screen {
             display: flex;
             flex-direction: column;
@@ -49,26 +48,31 @@
             color: white;
         }
 
-        .auth-screen h1 {
-            font-size: 42px;
-            margin-bottom: 16px;
-        }
+        .auth-screen h1 { font-size: 42px; margin-bottom: 16px; }
+        .auth-screen p { font-size: 18px; margin-bottom: 40px; opacity: 0.9; }
 
-        .auth-screen p {
+        .telegram-login-btn {
+            display: inline-block;
+            background: white;
+            color: #2d3436;
+            padding: 14px 32px;
+            border-radius: 60px;
             font-size: 18px;
-            margin-bottom: 40px;
-            opacity: 0.9;
+            font-weight: bold;
+            text-decoration: none;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: none;
+            cursor: pointer;
         }
 
-        /* Main app (hidden until auth) */
-        .main-app {
-            display: none;
-        }
+        .telegram-login-btn:hover { transform: scale(1.02); }
+
+        .main-app { display: none; }
 
         .app-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             padding: 16px;
-            text-align: center;
             color: white;
             display: flex;
             justify-content: space-between;
@@ -84,17 +88,8 @@
             border-radius: 40px;
         }
 
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: normal;
-        }
+        .user-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+        .user-name { font-size: 14px; }
 
         .tabs {
             display: flex;
@@ -113,7 +108,6 @@
             border: none;
             color: var(--text-color);
             cursor: pointer;
-            transition: 0.2s;
             font-weight: 500;
         }
 
@@ -122,22 +116,8 @@
             border-bottom: 2px solid var(--primary);
         }
 
-        .tab-content {
-            display: none;
-            padding: 16px;
-            height: calc(100vh - 110px);
-            overflow-y: auto;
-        }
-
+        .tab-content { display: none; padding: 16px; height: calc(100vh - 110px); overflow-y: auto; }
         .tab-content.active { display: block; }
-
-        /* Cards */
-        .cards-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
 
         #card-stack {
             position: relative;
@@ -160,27 +140,10 @@
             cursor: grab;
         }
 
-        .card-photo {
-            width: 100%;
-            height: 65%;
-            object-fit: cover;
-        }
-
-        .card-info {
-            padding: 20px;
-            background: var(--surface-color);
-        }
-
-        .card-name {
-            font-size: 26px;
-            font-weight: bold;
-        }
-
-        .card-age, .card-city {
-            font-size: 16px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
+        .card-photo { width: 100%; height: 65%; object-fit: cover; }
+        .card-info { padding: 20px; }
+        .card-name { font-size: 26px; font-weight: bold; }
+        .card-age, .card-city { font-size: 16px; color: var(--text-secondary); margin-top: 4px; }
 
         .card-buttons {
             display: flex;
@@ -196,13 +159,11 @@
             cursor: pointer;
             padding: 12px 28px;
             border-radius: 60px;
-            transition: 0.1s;
         }
 
         .like-btn { color: var(--primary); }
         .dislike-btn { color: var(--text-secondary); }
 
-        /* Chat */
         .chat-item {
             padding: 16px;
             border-bottom: 1px solid var(--border-color);
@@ -236,18 +197,8 @@
             cursor: pointer;
         }
 
-        .photos-preview {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .photos-preview img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 16px;
-        }
+        .photos-preview { display: flex; gap: 10px; flex-wrap: wrap; }
+        .photos-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 16px; }
 
         .modal {
             display: none;
@@ -268,12 +219,7 @@
             flex-direction: column;
         }
 
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-        }
-
+        .chat-messages { flex: 1; overflow-y: auto; padding: 16px; }
         .message {
             max-width: 75%;
             padding: 10px 14px;
@@ -281,26 +227,10 @@
             background: var(--surface-light);
             margin: 8px 0;
         }
+        .message.own { background: var(--primary); color: white; margin-left: auto; }
 
-        .message.own {
-            background: var(--primary);
-            color: white;
-            align-self: flex-end;
-            margin-left: auto;
-        }
-
-        .chat-input {
-            display: flex;
-            padding: 12px;
-            gap: 8px;
-        }
-
-        .chat-input input {
-            flex: 1;
-            padding: 12px;
-            border-radius: 28px;
-            border: 1px solid var(--border-color);
-        }
+        .chat-input { display: flex; padding: 12px; gap: 8px; }
+        .chat-input input { flex: 1; padding: 12px; border-radius: 28px; border: 1px solid var(--border-color); }
 
         .theme-toggle {
             position: fixed;
@@ -313,19 +243,7 @@
             z-index: 20;
         }
 
-        .no-data {
-            text-align: center;
-            padding: 50px;
-            color: var(--text-secondary);
-        }
-        
-        /* Telegram Login Button container */
-        #telegram-login-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        
+        .no-data { text-align: center; padding: 50px; color: var(--text-secondary); }
         .logout-btn {
             background: rgba(255,255,255,0.2);
             border: none;
@@ -334,21 +252,23 @@
             border-radius: 20px;
             cursor: pointer;
             font-size: 12px;
-            margin-left: 8px;
         }
     </style>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <!-- Экран авторизации -->
     <div id="auth-screen" class="auth-screen">
         <h1>✨ Live in Life ✨</h1>
         <p>Знакомства для живого общения</p>
-        <div id="telegram-login-container"></div>
-        <div style="margin-top: 24px; font-size: 14px; opacity: 0.7;">Войдите через Telegram</div>
+        <button class="telegram-login-btn" id="telegram-login-btn">
+            🔑 Войти через Telegram
+        </button>
+        <div style="margin-top: 24px; font-size: 14px; opacity: 0.7;">
+            Нажмите для входа — это быстро и безопасно
+        </div>
     </div>
 
-    <!-- Основное приложение (показывается после авторизации) -->
+    <!-- Основное приложение -->
     <div id="main-app" class="main-app">
         <div class="app-header">
             <h2>✨ Live in Life</h2>
@@ -419,14 +339,15 @@
     </div>
 
     <script>
-        // ==================== Telegram Авторизация через бота @Live_in_Life_bot ====================
+        // ==================== Авторизация через редирект на бота ====================
         let currentUserId = null;
         let currentTelegramId = null;
         let currentChatPairId = null;
-        let currentTelegramUser = null;
         let users = {};
         let chats = [];
         let messages = {};
+
+        const BOT_USERNAME = 'Live_in_Life_bot';
 
         function loadData() {
             const stored = localStorage.getItem('liveinlife_data');
@@ -439,23 +360,18 @@
         }
 
         function saveData() {
-            localStorage.setItem('liveinlife_data', JSON.stringify({
-                users, chats, messages
-            }));
+            localStorage.setItem('liveinlife_data', JSON.stringify({ users, chats, messages }));
         }
 
         function getCurrentProfile() {
             return users[currentUserId] || null;
         }
 
-        // Инициализация после авторизации
-        function initAfterAuth(telegramUser) {
-            currentTelegramUser = telegramUser;
+        // Сохранение пользователя после авторизации
+        function saveUserFromTelegram(telegramUser) {
             currentTelegramId = telegramUser.id;
-            // Загружаем данные
             loadData();
             
-            // Проверяем, есть ли пользователь с таким telegram_id
             let existingUser = null;
             for (let id in users) {
                 if (users[id].telegram_id === currentTelegramId) {
@@ -466,7 +382,6 @@
             }
             
             if (!existingUser) {
-                // Новый пользователь
                 currentUserId = Date.now();
                 users[currentUserId] = {
                     id: currentUserId,
@@ -484,74 +399,56 @@
                 saveData();
             }
             
-            // Обновляем UI
             document.getElementById('user-name').innerText = users[currentUserId].name;
-            if (telegramUser.photo_url) {
-                document.getElementById('user-avatar').src = telegramUser.photo_url;
-            } else {
-                document.getElementById('user-avatar').src = 'https://avatars.githubusercontent.com/u/1?v=4';
-            }
+            document.getElementById('user-avatar').src = telegramUser.photo_url || 'https://avatars.githubusercontent.com/u/1?v=4';
             
-            // Показываем основное приложение
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
             
-            // Загружаем профиль и данные
             loadProfileUI();
             loadNextCard();
             loadChats();
         }
-        
-        function logout() {
-            localStorage.removeItem('liveinlife_data');
-            location.reload();
+
+        // Проверка параметров в URL (после редиректа от бота)
+        function checkTelegramAuth() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tgId = urlParams.get('tg_id');
+            const tgName = urlParams.get('tg_name');
+            const tgUsername = urlParams.get('tg_username');
+            
+            if (tgId && tgName) {
+                saveUserFromTelegram({
+                    id: parseInt(tgId),
+                    first_name: tgName,
+                    username: tgUsername,
+                    photo_url: null
+                });
+                // Очищаем URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+                return true;
+            }
+            return false;
         }
 
-        // Telegram Login Widget с ботом @Live_in_Life_bot
-        function initTelegramAuth() {
-            // Если уже внутри Telegram Mini App
-            if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
-                const tgUser = Telegram.WebApp.initDataUnsafe.user;
-                initAfterAuth({
-                    id: tgUser.id,
-                    first_name: tgUser.first_name,
-                    username: tgUser.username,
-                    photo_url: tgUser.photo_url
-                });
-                return;
-            }
-            
-            // Иначе показываем кнопку входа через Telegram Widget с ботом Live_in_Life_bot
-            const container = document.getElementById('telegram-login-container');
-            container.innerHTML = '';
-            
-            // Создаем iframe виджет Telegram Login
-            const iframe = document.createElement('iframe');
-            const botUsername = 'Live_in_Life_bot';
+        // Кнопка входа — редирект на бота
+        function loginWithTelegram() {
             const redirectUrl = window.location.href.split('?')[0];
-            iframe.src = `https://oauth.telegram.org/embed/${botUsername}?origin=${encodeURIComponent(redirectUrl)}&size=large&request_access=write`;
-            iframe.width = '300';
-            iframe.height = '80';
-            iframe.style.border = 'none';
-            iframe.style.overflow = 'hidden';
-            container.appendChild(iframe);
-            
-            // Слушаем сообщения от виджета
-            window.addEventListener('message', function(e) {
-                if (e.origin !== 'https://oauth.telegram.org') return;
-                if (e.data && e.data.event === 'auth_user') {
-                    const user = e.data.user;
-                    initAfterAuth({
-                        id: user.id,
-                        first_name: user.first_name,
-                        username: user.username,
-                        photo_url: user.photo_url
-                    });
-                }
+            const botUrl = `https://t.me/${BOT_USERNAME}?start=auth_${encodeURIComponent(redirectUrl)}`;
+            window.location.href = botUrl;
+        }
+
+        // Эмуляция для теста (если нет бэкенда, можно ввести демо-пользователя)
+        function demoLogin() {
+            saveUserFromTelegram({
+                id: 123456,
+                first_name: 'Тестовый',
+                username: 'test_user',
+                photo_url: null
             });
         }
 
-        // ==================== Остальная логика приложения ====================
+        // ==================== Остальная логика ====================
         function loadProfileUI() {
             const profile = getCurrentProfile();
             if (!profile) return;
@@ -743,6 +640,11 @@
             }
         }
 
+        function logout() {
+            localStorage.removeItem('liveinlife_data');
+            location.reload();
+        }
+
         function initTheme() {
             const saved = localStorage.getItem('theme') || 'light';
             document.body.className = saved;
@@ -754,6 +656,7 @@
         }
 
         // Event listeners
+        document.getElementById('telegram-login-btn')?.addEventListener('click', loginWithTelegram);
         document.getElementById('save-profile-btn')?.addEventListener('click', saveProfile);
         document.getElementById('send-msg-btn')?.addEventListener('click', sendMessage);
         document.getElementById('close-chat-btn')?.addEventListener('click', () => {
@@ -776,14 +679,30 @@
             });
         });
 
-        // Автоматический вход через Telegram WebApp или виджет
+        // Запуск
         initTheme();
-        
-        // Проверяем, есть ли уже данные в localStorage
         loadData();
         
-        // Запускаем авторизацию
-        initTelegramAuth();
+        // Сначала проверяем параметры в URL (от бота)
+        if (!checkTelegramAuth()) {
+            // Проверяем, есть ли уже сохранённый пользователь
+            for (let id in users) {
+                if (users[id]) {
+                    currentUserId = parseInt(id);
+                    currentTelegramId = users[id].telegram_id;
+                    document.getElementById('user-name').innerText = users[id].name;
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('main-app').style.display = 'block';
+                    loadProfileUI();
+                    loadNextCard();
+                    loadChats();
+                    break;
+                }
+            }
+        }
+        
+        // Демо-режим для теста (раскомментируйте, если нужно протестировать без бота)
+        // setTimeout(() => { if (!currentUserId) demoLogin(); }, 1000);
     </script>
 </body>
 </html>
